@@ -27,9 +27,48 @@ class _AuthScreenState extends State<AuthScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: const SafeArea(
+        child: SafeArea(
           child: Column(
-            children: [],
+            children: [
+              const SizedBox(height: 20),
+              const Text(
+                "Innerscape",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                isLogin ? "Welcome Back" : "Create Account",
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/images/tree.png',
+                width: 120,
+              ),
+              const SizedBox(height: 20),
+              //white form section
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30),
+                    ),
+                  ),
+                  child: Column(
+                    children: [],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
