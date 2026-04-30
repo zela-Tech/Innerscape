@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "448561284573",
+    "project_id": "innerscape-f10ac",
+    "storage_bucket": "innerscape-f10ac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:448561284573:android:c207f0be73b6c69df52234",
+        "android_client_info": {
+          "package_name": "com.example.innerscape"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrHosSAC6OWuqpU6MWN41oNCKJlldCXvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
