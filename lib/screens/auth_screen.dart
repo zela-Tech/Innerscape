@@ -109,10 +109,10 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ],
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Image.asset(
                   'assets/images/tree.png',
-                  width: 280,
+                  width: 120,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -121,7 +121,6 @@ class _AuthScreenState extends State<AuthScreen> {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
@@ -131,142 +130,144 @@ class _AuthScreenState extends State<AuthScreen> {
                       BoxShadow(
                         color: Color.fromRGBO(174, 0, 0, 0.05),
                         blurRadius: 10,
-                        offset: const Offset(0, -2),
+                        offset: Offset(0, -2),
                       ),
                     ],
                   ),
 
-                  child: Column(
-                    children: [
-                      //toogle between registration & log in
-                      Container(
-                        height: 45,
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => setState(() => isLogin = true),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: isLogin ? Colors.white : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(30),
-                                    boxShadow: isLogin ? [ 
-                                      BoxShadow( color: const Color.fromRGBO(0, 0, 0, 0.3), 
-                                      blurRadius: 8, 
-                                      offset: const Offset(0, 3),)
-                                    ] : [],
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: Column(
+                      children: [
+                        //toogle between registration & log in
+                        Container(
+                          height: 45,
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => setState(() => isLogin = true),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: isLogin ? Colors.white : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(30),
+                                      boxShadow: isLogin ? [ 
+                                        BoxShadow( color: const Color.fromRGBO(0, 0, 0, 0.3), 
+                                        blurRadius: 8, 
+                                        offset: const Offset(0, 3),)
+                                      ] : [],
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: const Text("Log In"),
                                   ),
-                                  alignment: Alignment.center,
-                                  child: const Text("Log In"),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => setState(() => isLogin = false),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  decoration: BoxDecoration(
-                                    color: !isLogin ? Colors.white : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(30),
-                                    boxShadow:!isLogin ? [ 
-                                      BoxShadow( color: const Color.fromRGBO(0, 0, 0, 0.3), 
-                                      blurRadius: 8, 
-                                      offset: const Offset(0, 3),)
-                                    ] : [],
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => setState(() => isLogin = false),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    decoration: BoxDecoration(
+                                      color: !isLogin ? Colors.white : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(30),
+                                      boxShadow:!isLogin ? [ 
+                                        BoxShadow( color: const Color.fromRGBO(0, 0, 0, 0.3), 
+                                        blurRadius: 8, 
+                                        offset: const Offset(0, 3),)
+                                      ] : [],
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: const Text("Sign Up"),
                                   ),
-                                  alignment: Alignment.center,
-                                  child: const Text("Sign Up"),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 25),
-                      
-                      //form
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    if (!isLogin) ...[
-                                      _buildInput("Name", "Name", nameController),
-                                      const SizedBox(height: 12),
-                                      _buildInput("Username", "Value", usernameController),
-                                      const SizedBox(height: 12),
-                                    ],
-                                    _buildInput("Email", "example@gmail.com", emailController,icon: Icons.mail,),
-                                    const SizedBox(height: 12),
-                                    _buildInput("Password", "Value", passwordController,isPassword: true,icon: Icons.lock,),
+                        const SizedBox(height: 25),
+                        
+                        //form
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              if (!isLogin) ...[
+                                _buildInput("Name", "Name", nameController),
+                                const SizedBox(height: 12),
+                                _buildInput("Username", "Value", usernameController),
+                                const SizedBox(height: 12),
+                              ],
+                              _buildInput("Email", "example@gmail.com", emailController,icon: Icons.mail,),
+                              const SizedBox(height: 12),
+                              _buildInput("Password", "Value", passwordController,isPassword: true,icon: Icons.lock,),
 
-                                    if (!isLogin) ...[
-                                      const SizedBox(height: 12),
-                                      _buildInput("Confirm Password", "Value",confirmPasswordController, isPassword: true,icon: Icons.lock,),
-                                    ],
+                              if (!isLogin) ...[
+                                const SizedBox(height: 12),
+                                _buildInput("Confirm Password", "Value",confirmPasswordController, isPassword: true,icon: Icons.lock,),
+                              ],
 
-                                    const SizedBox(height: 20,),
-                                    //cta-btn
-                                    SizedBox(
-                                      width: double.infinity,
-                                      height: 50,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromRGBO(139, 178, 245, 1),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                        ),
-                                        onPressed: isLoading ? null : handleSubmit,
-                                        child: isLoading ? const CircularProgressIndicator(color: Colors.white)
-                                          : Text(
-                                            isLogin ? "Sign In" : "Get Started",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
+                              const SizedBox(height: 20,),
+                              //cta-btn
+                              SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromRGBO(139, 178, 245, 1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: isLoading ? null : handleSubmit,
+                                  child: isLoading ? const CircularProgressIndicator(color: Colors.white)
+                                    : Text(
+                                      isLogin ? "Sign In" : "Get Started",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-
-                                    if (isLogin) ...[
-                                      const SizedBox(height: 10),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: InkWell(
-                                          onTap: () {
-                                            // TODO: navigate to reset password
-                                          },
-                                          child: const Text(
-                                            "Forgot password?",
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              decoration: TextDecoration.underline,
-                                              decorationThickness: 2,
-                                              height:1.5,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ]
-                                  ],
                                 ),
                               ),
-                          
-                            ),
-                          ],
+                              if (error.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    error,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                ),
+
+                              if (isLogin) ...[
+                                const SizedBox(height: 10),
+                                Align(
+                                  alignment: Alignment.centerLeft, 
+                                  child: InkWell(
+                                    onTap: () {
+                                      // TODO: navigate to reset password
+                                    },
+                                    child: const Text(
+                                      "Forgot password?",
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        decoration: TextDecoration.underline,
+                                        decorationThickness: 2,
+                                        height:1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ]
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
