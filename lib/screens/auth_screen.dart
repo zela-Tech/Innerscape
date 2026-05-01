@@ -107,7 +107,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                       const SizedBox(height: 25),
-
+                      
+                      //form
                       Expanded(
                         child: SingleChildScrollView(
                           child: Column(
@@ -126,6 +127,50 @@ class _AuthScreenState extends State<AuthScreen> {
                                 const SizedBox(height: 12),
                                 _buildInput("Confirm Password", "Value", isPassword: true),
                               ],
+
+                              const SizedBox(height: 20,),
+                              //cta-btn
+                              SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromRGBO(139, 178, 245, 0.59),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: () {},
+                                  child: Text(
+                                    isLogin ? "Sign In" : "Get Started",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              if (isLogin) ...[
+                                const SizedBox(height: 10),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: InkWell(
+                                    onTap: () {
+                                      // TODO: navigate to reset password
+                                    },
+                                    child: const Text(
+                                      "Forgot password?",
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        decoration: TextDecoration.underline,
+                                        decorationThickness: 2,
+                                        height:1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ]
                             ],
                           ),
                         ),
