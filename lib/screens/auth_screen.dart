@@ -52,6 +52,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 width: 120,
               ),
               const SizedBox(height: 20),
+
               //white form section
               Expanded(
                 child: Container(
@@ -64,7 +65,49 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                   child: Column(
-                    children: [],
+                    children: [
+                      //toogle between registration & log in
+                      Container(
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => isLogin = true),
+                                child: Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: isLogin ? Colors.white : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Text("Login"),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => isLogin = false),
+                                child: Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: !isLogin ? Colors.white : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Text("Register"),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                    ],
                   ),
                 ),
               ),
