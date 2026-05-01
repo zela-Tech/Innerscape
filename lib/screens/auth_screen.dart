@@ -8,7 +8,18 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+  final usernameController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  bool isLoading = false;
+  String error = "";
   bool isLogin = true;
+
+  //final auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
