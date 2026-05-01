@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import 'home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -19,8 +21,45 @@ class _AuthScreenState extends State<AuthScreen> {
   String error = "";
   bool isLogin = true;
 
-  //final auth = AuthService();
+  final auth = AuthService();
 
+  Future<void> handleSubmit() async {
+  if (!_formKey.currentState!.validate()) return;
+
+  setState(() {
+    isLoading = true;
+    error = "";
+  });
+
+  try {
+    if (isLogin) {
+      await auth.signIn(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+    } else {
+      await auth.register(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        name: nameController.text.trim(),
+        username: usernameController.text.trim(),
+      );
+    }
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    }
+  } catch (e) {
+    setState(() {
+      error = "Authentication failed";
+    });
+  }
+
+  setState(() => isLoading = false);
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
