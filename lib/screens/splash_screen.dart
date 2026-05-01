@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:innerscape/core/navigation/auth_nav.dart';
 import 'dart:async';
-import 'auth_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //delay before moving to auth screen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const AuthScreen()),
+        MaterialPageRoute(builder: (_) => const AuthNav()),
       );
     });
   }
