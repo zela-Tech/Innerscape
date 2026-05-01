@@ -226,14 +226,15 @@ class _AuthScreenState extends State<AuthScreen> {
                                             borderRadius: BorderRadius.circular(12),
                                           ),
                                         ),
-                                        onPressed: () {},
-                                        child: Text(
-                                          isLogin ? "Sign In" : "Get Started",
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
+                                        onPressed: isLoading ? null : handleSubmit,
+                                        child: isLoading ? const CircularProgressIndicator(color: Colors.white)
+                                          : Text(
+                                            isLogin ? "Sign In" : "Get Started",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
                                       ),
                                     ),
 
