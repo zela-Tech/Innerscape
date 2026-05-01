@@ -157,18 +157,18 @@ class _AuthScreenState extends State<AuthScreen> {
                           child: Column(
                             children: [
                               if (!isLogin) ...[
-                                _buildInput("Name", "Name"),
+                                _buildInput("Name", "Name", nameController),
                                 const SizedBox(height: 12),
-                                _buildInput("Username", "Value"),
+                                _buildInput("Username", "Value", usernameController),
                                 const SizedBox(height: 12),
                               ],
-                              _buildInput("Email", "example@gmail.com", icon: Icons.mail,),
+                              _buildInput("Email", "example@gmail.com", emailController,icon: Icons.mail,),
                               const SizedBox(height: 12),
-                              _buildInput("Password", "Value", isPassword: true,icon: Icons.lock,),
+                              _buildInput("Password", "Value", passwordController,isPassword: true,icon: Icons.lock,),
 
                               if (!isLogin) ...[
                                 const SizedBox(height: 12),
-                                _buildInput("Confirm Password", "Value", isPassword: true,icon: Icons.lock,),
+                                _buildInput("Confirm Password", "Value",confirmPasswordController, isPassword: true,icon: Icons.lock,),
                               ],
 
                               const SizedBox(height: 20,),
@@ -230,14 +230,31 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Widget _buildInput(String label, String hint, {bool isPassword = false, IconData? icon,}) {
+  Widget _buildInput(String label, String hint, TextEditingController controller, {bool isPassword = false, IconData? icon,}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label),
         const SizedBox(height: 6),
-        TextField(
+        TextFormField(
+          controller: controller,
           obscureText: isPassword,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "$label is required";
+            }
+            if (label == "Email" && !value.contains('@')) {
+              return "Enter a valid email";
+            }
+            if (label == "Password" && value.length < 6) {
+              return "Min 6 characters";
+            }
+            if (label == "Confirm Password" &&
+                value != passwordController.text) {
+              return "Passwords do not match";
+            }
+            return null;
+          },
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(
