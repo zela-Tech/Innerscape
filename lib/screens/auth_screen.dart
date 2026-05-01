@@ -107,6 +107,29 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                       const SizedBox(height: 25),
+
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              if (!isLogin) ...[
+                                _buildInput("Name", "Name"),
+                                const SizedBox(height: 12),
+                                _buildInput("Username", "Value"),
+                                const SizedBox(height: 12),
+                              ],
+                              _buildInput("Email", "example@gmail.com"),
+                              const SizedBox(height: 12),
+                              _buildInput("Password", "Value", isPassword: true),
+
+                              if (!isLogin) ...[
+                                const SizedBox(height: 12),
+                                _buildInput("Confirm Password", "Value", isPassword: true),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -115,6 +138,31 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInput(String label, String hint, {bool isPassword = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        const SizedBox(height: 6),
+        TextField(
+          obscureText: isPassword,
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: Colors.transparent,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(
+                color: Color.fromARGB(255, 206, 205, 205),
+                width: 1.0,
+              )
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
