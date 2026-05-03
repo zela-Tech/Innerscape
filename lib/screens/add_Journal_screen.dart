@@ -68,6 +68,40 @@ class AddJournalScreen extends StatelessWidget {
       ),
     );
   }
+  
+  Future<String?> _showCreateDialog(BuildContext context) async {
+    final TextEditingController controller = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("New Journal"),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: "Enter journal name",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (controller.text.trim().isEmpty) return;
+
+                Navigator.pop(context, controller.text.trim());
+              },
+              child: const Text("Create"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +151,15 @@ class AddJournalScreen extends StatelessWidget {
                     }
 
                     return GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context, journalDesigns[index]);
+                      onTap: () async {
+                        final title = await _showCreateDialog(context);
+
+                        if (title != null && title.isNotEmpty) {
+                          Navigator.pop(context, {
+                            "title": title,
+                            "cover": journalDesigns[index],
+                          });
+                        }
                       },
                       child: _buildCover(journalDesigns[index]),
                     );
