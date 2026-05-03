@@ -276,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                
+                //TODO: replace with most recent 2 journals
                 const SizedBox(height: 14),
                 Column(
                   children: [
