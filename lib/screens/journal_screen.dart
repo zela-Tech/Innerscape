@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import './add_Journal_screen.dart';
 import '../model/journal_model.dart';
+import './daily_journal_screen.dart';
+import './journal_editior_screen.dart';
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({super.key});
@@ -11,7 +13,7 @@ class JournalScreen extends StatefulWidget {
 
 class _JournalScreenState extends State<JournalScreen> {
   final List<Journal> journals = [
-    Journal(title: "Daily Journal", cover: "assets/images/green_cover.png",updatedAt: DateTime.now(),),
+    Journal(title: "Daily Journal", cover: "assets/images/green_cover.png",updatedAt: DateTime.now(),isDaily: true,),
   ];
 
   List<Journal> _getRecentJournals() {
@@ -188,50 +190,80 @@ class _JournalScreenState extends State<JournalScreen> {
   }
 
   Widget _journalTile(Journal journal) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 60,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 10,
-                  offset: const Offset(3, 5),
+    return GestureDetector(
+      onTap: () {
+        if (journal.isDaily) {
+          //for daily journaal only
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => DailyJournalScreen(
+                journalId: journal.title,
+                moodLabel: "Happy", //TODO: wire in mood here too
+                moodImage: "assets/images/happy.png",
+              ),
+            ),
+          );
+        } else {
+          //for all other journals
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => JournalEditorScreen(
+                journalId: journal.title,
+                title: journal.title,
+                cover: journal.cover,
+              ),
+            ),
+          );
+        }
+      },
+
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 60,
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 10,
+                    offset: const Offset(3, 5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
                 ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(10),
-                bottomRight: Radius.circular(10),
-              ),
-              child: Image.asset(
-                journal.cover,
-                fit: BoxFit.cover,
+                child: Image.asset(
+                  journal.cover,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
 
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
 
-          Expanded(
-            child: Text(
-              journal.title,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+            Expanded(
+              child: Text(
+                journal.title,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
-          ),
 
-          const Icon(Icons.chevron_right),
-        ],
+            const Icon(Icons.chevron_right),
+          ],
+        ),
       ),
     );
   }
