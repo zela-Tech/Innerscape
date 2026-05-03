@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import './add_Journal_screen.dart';
+import '../model/journal_model.dart';
 
-class JournalScreen extends StatelessWidget {
+class JournalScreen extends StatefulWidget {
   const JournalScreen({super.key});
 
-  final List<String> journalCovers = const [
-    "assets/images/green_cover.png",
-    "assets/images/red_cover.png",
-    "assets/images/teal_cover.png",
-    "assets/images/orange_cover.png",
-    "assets/images/pink_cover.png",
-    "assets/images/blue_cover.png",
-    "assets/images/purple_cover.png",
+  @override
+  State<JournalScreen> createState() => _JournalScreenState();
+}
+
+class _JournalScreenState extends State<JournalScreen> {
+  final List<Journal> journals = [
+    Journal(title: "Daily Journal", cover: "assets/images/green_cover.png",updatedAt: DateTime.now(),),
   ];
 
   @override
@@ -25,10 +25,8 @@ class JournalScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               const SizedBox(height: 10),
 
-              //header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -44,23 +42,38 @@ class JournalScreen extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.add_circle_outline),
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => const AddJournalScreen(),
                             ),
                           );
+
+                          if (result != null) {
+                            setState(() {
+                              journals.add(
+                                Journal(
+                                  title: result['title'],
+                                  cover: result['cover'],
+                                  updatedAt: DateTime.now(),
+                                ),
+                              );
+                            });
+                          }
                         },
                       ),
+                      const CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Colors.grey,
+                      )
                     ],
                   )
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 20), 
 
-              // feature journals/most recent
               SizedBox(
                 height: 120,
                 child: ListView(
@@ -74,7 +87,7 @@ class JournalScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
-              //TODO: ADD filter chips 
+
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
@@ -90,12 +103,20 @@ class JournalScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               Expanded(
-                child: ListView.builder(
-                  itemCount: journalCovers.length,
-                  itemBuilder: (context, index) {
-                    return _journalTile(journalCovers[index]);
-                  },
-                ),
+                child: journals.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "No journals yet.\nTap + to create one",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: journals.length,
+                        itemBuilder: (context, index) {
+                          return _journalTile(journals[index]);
+                        },
+                      ),
               ),
             ],
           ),
@@ -128,7 +149,7 @@ class JournalScreen extends StatelessWidget {
     );
   }
 
-  Widget _journalTile(String imagePath) {
+  Widget _journalTile(Journal journal) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -138,18 +159,10 @@ class JournalScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-
-          //book cover
           Container(
             width: 50,
             height: 60,
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(10),
-                bottomRight: Radius.circular(10),
-                topLeft: Radius.circular(0),
-                bottomLeft: Radius.circular(0),
-              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.15),
@@ -164,7 +177,7 @@ class JournalScreen extends StatelessWidget {
                 bottomRight: Radius.circular(10),
               ),
               child: Image.asset(
-                imagePath,
+                journal.cover,
                 fit: BoxFit.cover,
               ),
             ),
@@ -172,20 +185,10 @@ class JournalScreen extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Journal Title",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  "First few texts...",
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
+          Expanded(
+            child: Text(
+              journal.title,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
 
