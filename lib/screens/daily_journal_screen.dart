@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/journal_service.dart';
 
 class DailyJournalScreen extends StatefulWidget {
   final String moodLabel;
@@ -17,7 +18,19 @@ class DailyJournalScreen extends StatefulWidget {
 }
 
 class _DailyJournalScreenState extends State<DailyJournalScreen> {
-  final TextEditingController _controller = TextEditingController();
+  final List<TextEditingController> _pages = [
+    TextEditingController()
+  ];
+
+  int currentPage = 0;
+
+  void _addPage() {
+    setState(() {
+      _pages.add(TextEditingController());
+      currentPage = _pages.length - 1;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +54,7 @@ class _DailyJournalScreenState extends State<DailyJournalScreen> {
 
             Expanded(
               child: TextField(
-                controller: _controller,
+                controller: _pages[currentPage],
                 maxLines: null,
                 expands: true,
                 decoration: const InputDecoration(
