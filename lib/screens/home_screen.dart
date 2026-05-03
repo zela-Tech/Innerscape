@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'settings_screen.dart';
 import '../services/mood_service.dart';
 import './daily_journal_screen.dart';
+import '../services/journal_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final MoodService _moodService = MoodService();
+  final JournalService _journalService = JournalService();
 
   @override
   Widget build(BuildContext context) {
@@ -114,9 +116,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         final image = m["image"] as String;
 
                         try {
-                          await _moodService.logMood(
+                          await _moodService.logMood( //used to log mood
                             label: label,
                             image: image,
+                          );
+
+                          // for creating or getting journal
+                          final journalId = await _journalService.createOrGetDailyJournal(
+                            moodLabel: label,
+                            moodImage: image,
                           );
 
                           if (!mounted) return;
@@ -127,12 +135,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               builder: (_) => DailyJournalScreen(
                                 moodLabel: label,
                                 moodImage: image,
+                                journalId: journalId,
                               ),
                             ),
                           );
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Error logging mood")),
+                            const SnackBar(content: Text("Error creating journal")),
                           );
                         }
                       },
