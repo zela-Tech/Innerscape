@@ -14,6 +14,13 @@ class _JournalScreenState extends State<JournalScreen> {
     Journal(title: "Daily Journal", cover: "assets/images/green_cover.png",updatedAt: DateTime.now(),),
   ];
 
+  List<Journal> _getRecentJournals() {
+    final sorted = List<Journal>.from(journals);
+    sorted.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
+    return sorted.take(3).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,9 +86,46 @@ class _JournalScreenState extends State<JournalScreen> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    _topCard("Daily Journal", Colors.redAccent),
-                    _topCard("2026 Goals", Colors.teal),
-                    _topCard("Recipes", Colors.brown),
+                    SizedBox(
+                      height: 120,
+                      child: journals.isEmpty
+                          ? const Center(child: Text("No recent journals yet",style: TextStyle(color: Colors.grey),),)
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _getRecentJournals().length,
+                              itemBuilder: (context, index) {
+                                final journal = _getRecentJournals()[index];
+
+                                return Container(
+                                  width: 90,
+                                  margin: const EdgeInsets.only(right: 12),
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(16),
+                                      bottomRight: Radius.circular(16),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.2),
+                                        blurRadius: 10,
+                                        offset: const Offset(4, 6),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(16),
+                                      bottomRight: Radius.circular(16),
+                                    ),
+                                    child: Image.asset(
+                                      journal.cover,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
                   ],
                 ),
               ),
@@ -119,30 +163,6 @@ class _JournalScreenState extends State<JournalScreen> {
                       ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _topCard(String title, Color color) {
-    return Container(
-      width: 140,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.85),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Align(
-          alignment: Alignment.bottomLeft,
-          child: Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
           ),
         ),
       ),
