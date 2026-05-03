@@ -15,14 +15,34 @@ class _JournalScreenState extends State<JournalScreen> {
   ];
 
   List<Journal> _getRecentJournals() {
-    final sorted = List<Journal>.from(journals);
+    final List<Journal> sorted = List.from(journals);
+
+    Journal? daily;
+    sorted.removeWhere((j) {
+      if (j.title == "Daily Journal") {
+        daily = j;
+        return true;
+      }
+      return false;
+    });
+
     sorted.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
-    return sorted.take(3).toList();
+    final List<Journal> result = [];
+
+    if (daily != null) {
+      result.add(daily!);
+    }
+
+    result.addAll(sorted);
+
+    return result.take(5).toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final recent = _getRecentJournals();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7F9),
 
@@ -32,6 +52,7 @@ class _JournalScreenState extends State<JournalScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
               const SizedBox(height: 10),
 
               Row(
@@ -79,55 +100,52 @@ class _JournalScreenState extends State<JournalScreen> {
                 ],
               ),
 
-              const SizedBox(height: 20), 
-
+              const SizedBox(height: 20),
+              //recents
               SizedBox(
                 height: 120,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    SizedBox(
-                      height: 120,
-                      child: journals.isEmpty
-                          ? const Center(child: Text("No recent journals yet",style: TextStyle(color: Colors.grey),),)
-                          : ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: _getRecentJournals().length,
-                              itemBuilder: (context, index) {
-                                final journal = _getRecentJournals()[index];
+                child: recent.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "No recent journals yet",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: recent.length,
+                        itemBuilder: (context, index) {
+                          final journal = recent[index];
 
-                                return Container(
-                                  width: 90,
-                                  margin: const EdgeInsets.only(right: 12),
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(16),
-                                      bottomRight: Radius.circular(16),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.2),
-                                        blurRadius: 10,
-                                        offset: const Offset(4, 6),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(16),
-                                      bottomRight: Radius.circular(16),
-                                    ),
-                                    child: Image.asset(
-                                      journal.cover,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              },
+                          return Container(
+                            width: 90,
+                            margin: const EdgeInsets.only(right: 12),
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(16),
+                                bottomRight: Radius.circular(16),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(4, 6),
+                                ),
+                              ],
                             ),
-                    ),
-                  ],
-                ),
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(16),
+                                bottomRight: Radius.circular(16),
+                              ),
+                              child: Image.asset(
+                                journal.cover,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
               ),
 
               const SizedBox(height: 20),
