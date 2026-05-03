@@ -110,7 +110,7 @@ class HomeScreen extends StatelessWidget {
               ),
 
               //ai analytics cta-card 
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               SizedBox(
                 width: double.infinity,
                 child: Container(
@@ -283,6 +283,62 @@ class HomeScreen extends StatelessWidget {
             fit: BoxFit.contain,
           ),
           Text(label),
+        ],
+      ),
+    );
+  }
+
+  Widget _journalCard({required String title,required String subtitle,required List<Color> gradientColors,}) {
+    return Container(
+      height:100,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          //journal cover
+          Container(
+            width: 100,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(colors: gradientColors),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16,),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
