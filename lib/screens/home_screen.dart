@@ -15,18 +15,19 @@ class HomeScreen extends StatelessWidget {
       return "🌘 Good evening, User";
     }
   }
-  final List<Map<String, dynamic>> moods = const [
-    {"image": "assets/images/angry.png", "label": "Angry", "color": Color.fromRGBO(235, 98, 218, 1)},
-    {"image": "assets/images/happy.png", "label": "Happy", "color": Color.fromRGBO(58,203, 218, 1)},
-    {"image": "assets/images/anxious.png", "label": "Anxious", "color": Color.fromRGBO(211, 169, 241, 1)},
-    {"image": "assets/images/sad.png", "label": "Sad", "color": Color.fromRGBO(145, 207, 251, 1)},
-    {"image": "assets/images/meh.png", "label": "Meh", "color": Color.fromRGBO(171, 144, 242, 1)},
-    {"image": "assets/images/tired.png", "label": "Tired", "color": Color.fromRGBO(237, 126, 188
-    , 1)},
-  ];
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> moods = const [
+      {"image": "assets/images/angry.png", "label": "Angry", "color": Color.fromRGBO(235, 98, 218, 1)},
+      {"image": "assets/images/happy.png", "label": "Happy", "color": Color.fromRGBO(58,203, 218, 1)},
+      {"image": "assets/images/anxious.png", "label": "Anxious", "color": Color.fromRGBO(211, 169, 241, 1)},
+      {"image": "assets/images/sad.png", "label": "Sad", "color": Color.fromRGBO(145, 207, 251, 1)},
+      {"image": "assets/images/meh.png", "label": "Meh", "color": Color.fromRGBO(171, 144, 242, 1)},
+      {"image": "assets/images/tired.png", "label": "Tired", "color": Color.fromRGBO(237, 126, 188
+      , 1)},
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7F9),
       body: SafeArea(
@@ -38,7 +39,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              //top Bar
+              //top Bar -- setings icon
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -65,8 +66,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
 
+              //greeting  section
+              const SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
                 child: Column(
@@ -239,20 +241,25 @@ class HomeScreen extends StatelessWidget {
                     _journalCard(
                       title: "Daily Journal",
                       subtitle: "Wellness · Mar 27",
-                      gradientColors: [
-                        Colors.green,
-                        Colors.yellow,
-                        Colors.blue
+                      colors: [
+                        Color(0xFF1F3602),
+                        Color(0xFFDADA5E),
+                        Color(0xFF7AA00B),
+                        Color(0xFF1D4F58),
+                        Color(0xFF50BFC6),
+
                       ],
                     ),
                     const SizedBox(height: 12),
                     _journalCard(
                       title: "Journal Name",
                       subtitle: "Wellness · Mar 27",
-                      gradientColors: [
-                        Colors.green,
-                        Colors.yellow,
-                        Colors.blue
+                      colors: [
+                        Color(0xFFD2E7EC),
+                        Color(0xFF85E1CC),
+                        Color(0xFF6BC5C6),
+                        Color(0xFF6BC5C6),
+                        Color(0xFF055B58),
                       ],
                     ),
                   ],
@@ -288,11 +295,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _journalCard({required String title,required String subtitle,required List<Color> gradientColors,}) {
+  Widget _journalCard({required String title,required String subtitle,required List<Color> colors,}) {
     return Container(
       height:100,
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: const Color.fromRGBO(20, 97, 112, 0.07),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -303,7 +310,13 @@ class HomeScreen extends StatelessWidget {
             height: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(colors: gradientColors),
+              gradient: SweepGradient(
+                center: Alignment.center,
+                startAngle: 0.0,
+                endAngle: 3.14 * 2,
+                colors: colors,
+                stops:const [0.0, 0.5, 0.75, 0.88,1.0],
+              ),
             ),
           ),
 
