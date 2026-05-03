@@ -15,6 +15,15 @@ class HomeScreen extends StatelessWidget {
       return "🌘 Good evening, User";
     }
   }
+  final List<Map<String, dynamic>> moods = const [
+    {"image": "assets/images/angry.png", "label": "Angry", "color": Color.fromRGBO(235, 98, 218, 1)},
+    {"image": "assets/images/happy.png", "label": "Happy", "color": Color.fromRGBO(58,203, 218, 1)},
+    {"image": "assets/images/anxious.png", "label": "Anxious", "color": Color.fromRGBO(211, 169, 241, 1)},
+    {"image": "assets/images/sad.png", "label": "Sad", "color": Color.fromRGBO(145, 207, 251, 1)},
+    {"image": "assets/images/meh.png", "label": "Meh", "color": Color.fromRGBO(171, 144, 242, 1)},
+    {"image": "assets/images/tired.png", "label": "Tired", "color": Color.fromRGBO(237, 126, 188
+    , 1)},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                       "How are you feeling today?",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -82,10 +91,50 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 50),
+              Wrap(
+                spacing: 20,
+                runSpacing: 20,
+                children: moods.map((m) {
+                  return GestureDetector(
+                    onTap: () {
+                      // future: Firebase / state update
+                    },
+                    child: _moodCard(
+                      m["image"] as String,
+                      m["label"] as String,
+                      m["color"] as Color,
+                    ),
+                  );
+                }).toList(),
+              ),
+            
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _moodCard(String imagePath, String label, Color color) {
+    return Container(
+      width: 110,
+      height: 40,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            imagePath,
+            width: 42,
+            height: 33,
+            fit: BoxFit.contain,
+          ),
+          Text(label),
+        ],
       ),
     );
   }
