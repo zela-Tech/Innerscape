@@ -56,7 +56,33 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
 
+              SizedBox(
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    Text(
+                      getGreeting(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text(
+                      "How are you feeling today?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),
