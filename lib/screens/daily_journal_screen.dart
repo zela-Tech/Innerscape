@@ -74,19 +74,26 @@ class _DailyJournalScreenState extends State<DailyJournalScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 120,
-                    height: 160,
+                    width: 78,
+                    height: 96,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
                       image: const DecorationImage(
                         image: AssetImage('assets/images/red_cover.png'),
                         fit: BoxFit.cover,
                       ),
+
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                        topLeft: Radius.circular(0),
+                        bottomLeft: Radius.circular(0),
+                      ),
+
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 16,
-                          offset: Offset(0, 6),
+                          color: Colors.black.withValues(alpha: 0.6),
+                          blurRadius: 10,
+                          offset: const Offset(4, 6),
                         ),
                       ],
                     ),
