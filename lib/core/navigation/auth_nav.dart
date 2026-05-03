@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../screens/auth_screen.dart';
-import '../../screens/home_screen.dart';
+import './main_nav.dart';
 
 class AuthNav extends StatelessWidget {
   const AuthNav({super.key});
@@ -21,7 +21,7 @@ class AuthNav extends StatelessWidget {
 
         //user logged in
         if (snapshot.hasData) {
-          return const HomeScreen();
+          return const MainNav();
         }
 
         // Not logged in
