@@ -212,6 +212,27 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
+              //journal section
+              const SizedBox(height: 30,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text(
+                    "Your Journal",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    "See All",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 14),
             ],
           ),
         ),
