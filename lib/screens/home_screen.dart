@@ -120,6 +120,7 @@ class HomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Stack(
+                    clipBehavior: Clip.none,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                           const Text(
                             "Take control of your mind,\none day at a time.",
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 22,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -140,7 +141,7 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.w500
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 24),
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
@@ -158,6 +159,54 @@ class HomeScreen extends StatelessWidget {
                             ),
                           )
                         ],
+                      ),
+
+                      // for floating emojis on ai card above
+                      Positioned(
+                        right: -5,
+                        top: -20,
+                        child: Transform.rotate(
+                          angle: 3.0,
+                          child: Image.asset(
+                            "assets/images/meh.png",
+                            width: 70,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 20,
+                        bottom: -20,
+                        child: Image.asset(
+                          "assets/images/tired.png",
+                          width: 60,
+                        ),
+                      ),
+                      Positioned(
+                        right: 70,
+                        bottom: 30,
+                        child: Image.asset(
+                          "assets/images/sad.png",
+                          width: 60,
+                        ),
+                      ),
+                      Positioned(
+                        right: 80,
+                        bottom: 65,
+                        child: Image.asset(
+                          "assets/images/extra0.png",
+                          width: 35,
+                        ),
+                      ),
+                      Positioned(
+                        left: 95,
+                        bottom: 15,
+                        child: Transform.rotate(
+                          angle: 0.5,
+                          child: Image.asset(
+                            "assets/images/happy.png",
+                            width: 55,
+                          ),
+                        ),
                       ),
                     ],
                   ),
