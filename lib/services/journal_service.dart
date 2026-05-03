@@ -68,4 +68,23 @@ class JournalService {
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
+  Future<void> saveEntry({required String journalId,required int pageNumber,required String content,}) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("User not logged in");
+
+    final uid = user.uid;
+
+    await _db
+        .collection('users')
+        .doc(uid)
+        .collection('journals')
+        .doc(journalId)
+        .collection('entries')
+        .doc("page_$pageNumber")
+        .set({
+      'content': content,
+      'pageNumber': pageNumber,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
 }
