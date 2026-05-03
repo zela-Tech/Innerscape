@@ -105,4 +105,25 @@ class JournalService {
 
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
+
+  Future<String> createJournal({required String title,required String cover,}) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("User not logged in");
+
+    final uid = user.uid;
+
+    final docRef = await _db
+        .collection('users')
+        .doc(uid)
+        .collection('journals')
+        .add({
+      'title': title,
+      'cover': cover,
+      'type': 'custom',
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+
+    return docRef.id;
+  }
 }
