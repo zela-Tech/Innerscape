@@ -119,34 +119,62 @@ class _JournalScreenState extends State<JournalScreen> {
                         itemBuilder: (context, index) {
                           final journal = recent[index];
 
-                          return Container(
-                            width: 90,
-                            margin: const EdgeInsets.only(right: 12),
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(16),
-                                bottomRight: Radius.circular(16),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.2),
-                                  blurRadius: 10,
-                                  offset: const Offset(4, 6),
+                          return GestureDetector(
+                            onTap: () {
+                              if (journal.isDaily) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => DailyJournalScreen(
+                                      journalId: journal.title,
+                                      moodLabel: "Happy",
+                                      moodImage: "assets/images/happy.png",
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => JournalEditorScreen(
+                                      journalId: journal.title,
+                                      title: journal.title,
+                                      cover: journal.cover,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+
+                            child: Container(
+                              width: 90,
+                              margin: const EdgeInsets.only(right: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(16),
+                                  bottomRight: Radius.circular(16),
                                 ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(16),
-                                bottomRight: Radius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.2),
+                                    blurRadius: 10,
+                                    offset: const Offset(4, 6),
+                                  ),
+                                ],
                               ),
-                              child: Image.asset(
-                                journal.cover,
-                                fit: BoxFit.cover,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(16),
+                                  bottomRight: Radius.circular(16),
+                                ),
+                                child: Image.asset(
+                                  journal.cover,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           );
-                        },
+                        }
                       ),
               ),
 
