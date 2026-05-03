@@ -32,6 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
     , 1)},
   ];
 
+  final MoodService _moodService = MoodService();
+
   @override
   Widget build(BuildContext context) {
 
@@ -107,8 +109,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   runSpacing: 20,
                   children: moods.map((m) {
                     return GestureDetector(
-                      onTap: () {
-                        // future: Firebase / state update
+                      onTap: () async {
+                        final label = m["label"] as String;
+                        final image = m["image"] as String;
+
+                        try {
+                          await _moodService.logMood(
+                            label: label,
+                            image: image,
+                          );
+
+                          if (!mounted) return;
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DailyJournalScreen(
+                                moodLabel: label,
+                                moodImage: image,
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Error logging mood")),
+                          );
+                        }
                       },
                       child: _moodCard(
                         m["image"] as String,
@@ -243,35 +269,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 
                 const SizedBox(height: 14),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      _journalCard(
-                        title: "Daily Journal",
-                        subtitle: "Wellness · Mar 27",
-                        colors: [
-                          Color(0xFF1F3602),
-                          Color(0xFFDADA5E),
-                          Color(0xFF7AA00B),
-                          Color(0xFF1D4F58),
-                          Color(0xFF50BFC6),
+                Column(
+                  children: [
+                    _journalCard(
+                      title: "Daily Journal",
+                      subtitle: "Wellness · Mar 27",
+                      colors: [
+                        Color(0xFF1F3602),
+                        Color(0xFFDADA5E),
+                        Color(0xFF7AA00B),
+                        Color(0xFF1D4F58),
+                        Color(0xFF50BFC6),
 
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      _journalCard(
-                        title: "Journal Name",
-                        subtitle: "Wellness · Mar 27",
-                        colors: [
-                          Color(0xFFD2E7EC),
-                          Color(0xFF85E1CC),
-                          Color(0xFF6BC5C6),
-                          Color(0xFF6BC5C6),
-                          Color(0xFF055B58),
-                        ],
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _journalCard(
+                      title: "Journal Name",
+                      subtitle: "Wellness · Mar 27",
+                      colors: [
+                        Color(0xFFD2E7EC),
+                        Color(0xFF85E1CC),
+                        Color(0xFF6BC5C6),
+                        Color(0xFF6BC5C6),
+                        Color(0xFF055B58),
+                      ],
+                    ),
+                  ],
                 )
               ],
             ),
