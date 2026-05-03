@@ -233,6 +233,31 @@ class HomeScreen extends StatelessWidget {
               ),
               
               const SizedBox(height: 14),
+              Expanded(
+                child: ListView(
+                  children: [
+                    _journalCard(
+                      title: "Daily Journal",
+                      subtitle: "Wellness · Mar 27",
+                      gradientColors: [
+                        Colors.green,
+                        Colors.yellow,
+                        Colors.blue
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _journalCard(
+                      title: "Journal Name",
+                      subtitle: "Wellness · Mar 27",
+                      gradientColors: [
+                        Colors.green,
+                        Colors.yellow,
+                        Colors.blue
+                      ],
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
