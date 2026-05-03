@@ -20,6 +20,35 @@ class DailyJournalScreen extends StatefulWidget {
 class _DailyJournalScreenState extends State<DailyJournalScreen> {
   final List<TextEditingController> _pages = [TextEditingController()];
   final JournalService _journalService = JournalService();
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEntries();
+  }
+  Future<void> _loadEntries() async {
+    try {
+      final entries =await _journalService.getJournalEntries(widget.journalId);
+
+      if (entries.isNotEmpty) {
+        _pages.clear();
+
+        for (var entry in entries) {
+          final controller = TextEditingController(
+            text: entry['content'] ?? "",
+          );
+          _pages.add(controller);
+        }
+      }
+    }catch (e) {
+      // optional: show error
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
 
   int currentPage = 0;
@@ -54,7 +83,7 @@ class _DailyJournalScreenState extends State<DailyJournalScreen> {
       backgroundColor: const Color(0xFFF6F7F9),
 
       body: SafeArea(
-        child: Column(
+        child: _isLoading ? const Center(child: CircularProgressIndicator()) : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
