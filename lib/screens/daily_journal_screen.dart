@@ -18,9 +18,9 @@ class DailyJournalScreen extends StatefulWidget {
 }
 
 class _DailyJournalScreenState extends State<DailyJournalScreen> {
-  final List<TextEditingController> _pages = [
-    TextEditingController()
-  ];
+  final List<TextEditingController> _pages = [TextEditingController()];
+  final JournalService _journalService = JournalService();
+
 
   int currentPage = 0;
 
@@ -29,6 +29,22 @@ class _DailyJournalScreenState extends State<DailyJournalScreen> {
       _pages.add(TextEditingController());
       currentPage = _pages.length - 1;
     });
+  }
+
+  Future<void> _saveCurrentPage() async {
+    final content = _pages[currentPage].text;
+
+    await _journalService.saveEntry(
+      journalId: widget.journalId,
+      pageNumber: currentPage + 1,
+      content: content,
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Saved")),
+    );
   }
 
 
