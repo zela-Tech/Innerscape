@@ -15,13 +15,24 @@ class AuthService {
     final user = credential.user;
 
     if (user != null) {
-      await _db.collection('users').doc(user.uid).set({
+      final userRef = _db.collection('users').doc(user.uid);
+
+      await userRef.set({
         'email': email,
         'name': name,
         'username': username,
-        'createdAt':Timestamp.now(),
+        'createdAt': Timestamp.now(),
+      });
+
+      await userRef.collection('journals').add({
+        'title': 'Daily Journal',
+        'cover': 'assets/images/red_cover.png',
+        'type': 'daily',
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
       });
     }
+
     return credential;
   }
 
