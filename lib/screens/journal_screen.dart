@@ -28,35 +28,8 @@ class _JournalScreenState extends State<JournalScreen> {
       .map((snapshot) => snapshot.docs.map((doc) => Journal.fromFirestore(doc.id, doc.data())).toList());
   }
 
-  List<Journal> _getRecentJournals() {
-    final List<Journal> sorted = List.from(journals);
-
-    Journal? daily;
-    sorted.removeWhere((j) {
-      if (j.title == "Daily Journal") {
-        daily = j;
-        return true;
-      }
-      return false;
-    });
-
-    sorted.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-
-    final List<Journal> result = [];
-
-    if (daily != null) {
-      result.add(daily!);
-    }
-
-    result.addAll(sorted);
-
-    return result.take(5).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final recent = _getRecentJournals();
-
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7F9),
 
@@ -128,76 +101,77 @@ class _JournalScreenState extends State<JournalScreen> {
               //recents
               SizedBox(
                 height: 120,
-                child: recent.isEmpty
-                    ? const Center(
+                child: StreamBuilder<List<Journal>>(
+                  stream: getJournals(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final journals = snapshot.data!;
+
+                    final recent = journals.take(5).toList();
+
+                    if (recent.isEmpty) {
+                      return const Center(
                         child: Text(
                           "No recent journals yet",
                           style: TextStyle(color: Colors.grey),
                         ),
-                      )
-                    : ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: recent.length,
-                        itemBuilder: (context, index) {
-                          final journal = recent[index];
+                      );
+                    }
 
-                          return GestureDetector(
-                            onTap: () {
-                              if (journal.isDaily) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => DailyJournalScreen(
-                                      journalId: journal.id,
-                                      moodLabel: "Happy",
-                                      moodImage: "assets/images/happy.png",
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => JournalEditorScreen(
-                                      journalId: journal.id,
-                                      title: journal.title,
-                                      cover: journal.cover,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: recent.length,
+                      itemBuilder: (context, index) {
+                        final journal = recent[index];
 
-                            child: Container(
-                              width: 90,
-                              margin: const EdgeInsets.only(right: 12),
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(16),
-                                  bottomRight: Radius.circular(16),
+                        return GestureDetector(
+                          onTap: () {
+                            if (journal.isDaily) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DailyJournalScreen(
+                                    journalId: journal.id,
+                                    moodLabel: "Happy",
+                                    moodImage: "assets/images/happy.png",
+                                  ),
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.2),
-                                    blurRadius: 10,
-                                    offset: const Offset(4, 6),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => JournalEditorScreen(
+                                    journalId: journal.id,
+                                    title: journal.title,
+                                    cover: journal.cover,
                                   ),
-                                ],
+                                ),
+                              );
+                            }
+                          },
+                          child: Container(
+                            width: 90,
+                            margin: const EdgeInsets.only(right: 12),
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(16),
+                                bottomRight: Radius.circular(16),
                               ),
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(16),
-                                  bottomRight: Radius.circular(16),
-                                ),
-                                child: Image.asset(
-                                  journal.cover,
-                                  fit: BoxFit.cover,
-                                ),
+                              child: Image.asset(
+                                journal.cover,
+                                fit: BoxFit.cover,
                               ),
                             ),
-                          );
-                        }
-                      ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
 
               const SizedBox(height: 20),
