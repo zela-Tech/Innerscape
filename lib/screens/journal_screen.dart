@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import './add_Journal_screen.dart';
 import '../model/journal_model.dart';
 import './daily_journal_screen.dart';
 import './journal_editior_screen.dart';
+import '../services/journal_service.dart';
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({super.key});
@@ -12,9 +15,18 @@ class JournalScreen extends StatefulWidget {
 }
 
 class _JournalScreenState extends State<JournalScreen> {
-  final List<Journal> journals = [
-    Journal(title: "Daily Journal", cover: "assets/images/green_cover.png",updatedAt: DateTime.now(),isDaily: true,),
-  ];
+  Stream<List<Journal>> getJournals() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception("User not logged in");
+
+    return FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('journals')
+      .orderBy('updatedAt', descending: true)
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) => Journal.fromFirestore(doc.id, doc.data())).toList());
+  }
 
   List<Journal> _getRecentJournals() {
     final List<Journal> sorted = List.from(journals);
@@ -81,15 +93,25 @@ class _JournalScreenState extends State<JournalScreen> {
                           );
 
                           if (result != null) {
-                            setState(() {
-                              journals.add(
-                                Journal(
+                            final journalService = JournalService();
+
+                            final journalId = await journalService.createJournal(
+                              title: result['title'],
+                              cover: result['cover'],
+                            );
+
+                            if (!mounted) return;
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => JournalEditorScreen(
+                                  journalId: journalId,
                                   title: result['title'],
                                   cover: result['cover'],
-                                  updatedAt: DateTime.now(),
                                 ),
-                              );
-                            });
+                              ),
+                            );
                           }
                         },
                       ),
@@ -126,7 +148,7 @@ class _JournalScreenState extends State<JournalScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => DailyJournalScreen(
-                                      journalId: journal.title,
+                                      journalId: journal.id,
                                       moodLabel: "Happy",
                                       moodImage: "assets/images/happy.png",
                                     ),
@@ -137,7 +159,7 @@ class _JournalScreenState extends State<JournalScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => JournalEditorScreen(
-                                      journalId: journal.title,
+                                      journalId: journal.id,
                                       title: journal.title,
                                       cover: journal.cover,
                                     ),
@@ -195,20 +217,29 @@ class _JournalScreenState extends State<JournalScreen> {
               const SizedBox(height: 20),
 
               Expanded(
-                child: journals.isEmpty
-                    ? const Center(
-                        child: Text(
-                          "No journals yet.\nTap + to create one",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: journals.length,
-                        itemBuilder: (context, index) {
-                          return _journalTile(journals[index]);
-                        },
-                      ),
+                child: StreamBuilder<List<Journal>>(
+                  stream: getJournals(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final journals = snapshot.data!;
+
+                    if (journals.isEmpty) {
+                      return const Center(
+                        child: Text("No journals yet"),
+                      );
+                    }
+
+                    return ListView.builder(
+                      itemCount: journals.length,
+                      itemBuilder: (context, index) {
+                        return _journalTile(journals[index]);
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -226,8 +257,8 @@ class _JournalScreenState extends State<JournalScreen> {
             context,
             MaterialPageRoute(
               builder: (_) => DailyJournalScreen(
-                journalId: journal.title,
-                moodLabel: "Happy", //TODO: wire in mood here too
+                journalId: journal.id,
+                moodLabel: "Happy",
                 moodImage: "assets/images/happy.png",
               ),
             ),
@@ -238,7 +269,7 @@ class _JournalScreenState extends State<JournalScreen> {
             context,
             MaterialPageRoute(
               builder: (_) => JournalEditorScreen(
-                journalId: journal.title,
+                journalId: journal.id,
                 title: journal.title,
                 cover: journal.cover,
               ),
@@ -284,7 +315,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
             Expanded(
               child: Text(
-                journal.title,
+                journal.id,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
