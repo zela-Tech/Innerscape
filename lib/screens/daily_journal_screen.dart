@@ -29,20 +29,22 @@ class _DailyJournalScreenState extends State<DailyJournalScreen> {
   }
   Future<void> _loadEntries() async {
     try {
-      final entries =await _journalService.getJournalEntries(widget.journalId);
+      final entries = await _journalService.getPages(widget.journalId);
 
-      if (entries.isNotEmpty) {
-        _pages.clear();
+      _pages.clear();
 
+      if (entries.isEmpty) {
+        _pages.add(TextEditingController());
+      } else {
         for (var entry in entries) {
-          final controller = TextEditingController(
-            text: entry['content'] ?? "",
+          _pages.add(
+            TextEditingController(text: entry['content'] ?? ""),
           );
-          _pages.add(controller);
         }
       }
-    }catch (e) {
-      // optional: show error
+    } catch (e) {
+      _pages.clear();
+      _pages.add(TextEditingController());
     }
 
     setState(() {
@@ -63,17 +65,23 @@ class _DailyJournalScreenState extends State<DailyJournalScreen> {
   Future<void> _saveCurrentPage() async {
     final content = _pages[currentPage].text;
 
-    await _journalService.saveEntry(
-      journalId: widget.journalId,
-      pageNumber: currentPage + 1,
-      content: content,
-    );
+    try {
+      await _journalService.addMoodEntry(
+        journalId: widget.journalId,
+        content: content,
+        moodLabel: widget.moodLabel,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Saved")),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Saved mood entry")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to save")),
+      );
+    }
   }
 
 

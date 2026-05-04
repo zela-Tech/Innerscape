@@ -289,7 +289,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
             Expanded(
               child: Text(
-                journal.id,
+                journal.title,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
