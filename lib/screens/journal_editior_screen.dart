@@ -21,6 +21,8 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
   final List<TextEditingController> _pages = [TextEditingController()];
   final JournalService _journalService = JournalService();
   bool _isLoading = true;
+  bool isBold = false;
+  bool isBullet = false;
 
   @override
   void initState() {
@@ -29,20 +31,22 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
   }
   Future<void> _loadEntries() async {
     try {
-      final entries =await _journalService.getJournalEntries(widget.journalId);
+      final entries = await _journalService.getPages(widget.journalId);
 
-      if (entries.isNotEmpty) {
-        _pages.clear();
+      _pages.clear();
 
+      if (entries.isEmpty) {
+        _pages.add(TextEditingController());
+      } else {
         for (var entry in entries) {
-          final controller = TextEditingController(
-            text: entry['content'] ?? "",
+          _pages.add(
+            TextEditingController(text: entry['content'] ?? ""),
           );
-          _pages.add(controller);
         }
       }
-    }catch (e) {
-      // optional: show error
+    } catch (e) {
+      _pages.clear();
+      _pages.add(TextEditingController());
     }
 
     setState(() {
@@ -63,17 +67,22 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
   Future<void> _saveCurrentPage() async {
     final content = _pages[currentPage].text;
 
-    await _journalService.saveEntry(
-      journalId: widget.journalId,
-      pageNumber: currentPage + 1,
-      content: content,
-    );
+    try {
+      await _journalService.addEntry(
+        journalId: widget.journalId,
+        content: content,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Saved")),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Saved successfully")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to save")),
+      );
+    }
   }
 
 
@@ -156,20 +165,15 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                 child: TextField(
                   controller: _pages[currentPage],
                   maxLines: null,
-                  expands:true,
-                  style: const TextStyle(
-                    fontSize:15,
-                    height:1.5,
+                  expands: true,
+                  style: TextStyle(
+                    fontSize: 15,
+                    height: 1.5,
+                    fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
                   ),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
-
                     hintText: "Start writing your thoughts...",
-                    hintStyle: TextStyle(
-                      fontSize: 14,
-                      color: Color.fromARGB(255, 158, 158, 158),
-                      fontStyle: FontStyle.italic,
-                    ),
                   ),
                 ),
               ),
@@ -234,12 +238,39 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    IconButton(
+                      icon: const Icon(Icons.camera_alt_outlined),
+                      onPressed: () {
+                        final controller = _pages[currentPage];
+                        controller.text += "\n📷 [Image Placeholder]\n";
+                      },
+                    ),
 
-                    Icon(Icons.camera_alt_outlined,
-                        color: Colors.grey[700]),
-                    Icon(Icons.format_list_bulleted,
-                        color: Colors.grey[700]),
-                    Icon(Icons.edit, color: Colors.grey[700]),
+                    IconButton(
+                      icon: Icon(
+                        Icons.format_list_bulleted,
+                        color: isBullet ? Colors.black : Colors.grey[700],
+                      ),
+                      onPressed: () {
+                        setState(() => isBullet = !isBullet);
+
+                        final controller = _pages[currentPage];
+
+                        if (isBullet) {
+                          controller.text += "\n• ";
+                        }
+                      },
+                    ),
+
+                    IconButton(
+                      icon: Icon(
+                        Icons.format_bold,
+                        color: isBold ? Colors.black : Colors.grey[700],
+                      ),
+                      onPressed: () {
+                        setState(() => isBold = !isBold);
+                      },
+                    ),
 
                     GestureDetector(
                       onTap: _addPage,
@@ -249,8 +280,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                           color: Colors.black,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.add,
-                            color: Colors.white),
+                        child: const Icon(Icons.add, color: Colors.white),
                       ),
                     ),
                   ],
