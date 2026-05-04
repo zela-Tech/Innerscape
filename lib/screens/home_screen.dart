@@ -3,6 +3,9 @@ import 'settings_screen.dart';
 import '../services/mood_service.dart';
 import './daily_journal_screen.dart';
 import '../services/journal_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import './journal_editior_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,6 +38,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final MoodService _moodService = MoodService();
   final JournalService _journalService = JournalService();
+  List<Map<String, dynamic>> journals = [];
+
+  Future<void> loadJournals() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('journals')
+        .orderBy('createdAt', descending: true)
+        .get();
+
+    setState(() {
+      journals = snapshot.docs.map((e) {
+        final data = e.data();
+        return {...data,'id': e.id,};
+      }).toList();
+    });
+  }
+  @override
+  void initState() {
+    super.initState();
+    loadJournals();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,15 +144,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         final image = m["image"] as String;
 
                         try {
-                          await _moodService.logMood( //used to log mood
+                          final journalId = await _journalService.getOrCreateDailyJournal();
+
+                          await _moodService.logMood(
                             label: label,
                             image: image,
                           );
 
-                          // for creating or getting journal
-                          final journalId = await _journalService.createOrGetDailyJournal(
+                          await _journalService.addMoodEntry(
+                            journalId: journalId,
+                            content: "",
                             moodLabel: label,
-                            moodImage: image,
                           );
 
                           if (!mounted) return;
@@ -139,9 +169,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           );
-                        } catch (e) {
+                        } catch (e, stack) {
+                          debugPrint("FULL ERROR: $e");
+                          debugPrint("STACK: $stack");
+
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Error creating journal")),
+                            SnackBar(content: Text("Error logging mood: $e")),
                           );
                         }
                       },
@@ -279,32 +312,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 //TODO: replace with most recent 2 journals
                 const SizedBox(height: 14),
                 Column(
-                  children: [
-                    _journalCard(
-                      title: "Daily Journal",
-                      subtitle: "Wellness · Mar 27",
-                      colors: [
-                        Color(0xFF1F3602),
-                        Color(0xFFDADA5E),
-                        Color(0xFF7AA00B),
-                        Color(0xFF1D4F58),
-                        Color(0xFF50BFC6),
+                  children: journals.take(2).map((j) {
+                    return GestureDetector(
+                      onTap: () async {
+                        final journalId = j['id']; // IMPORTANT FIX
 
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    _journalCard(
-                      title: "Journal Name",
-                      subtitle: "Wellness · Mar 27",
-                      colors: [
-                        Color(0xFFD2E7EC),
-                        Color(0xFF85E1CC),
-                        Color(0xFF6BC5C6),
-                        Color(0xFF6BC5C6),
-                        Color(0xFF055B58),
-                      ],
-                    ),
-                  ],
+                        if (journalId == null) return;
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => JournalEditorScreen(
+                              journalId: journalId,
+                              title: j['title'] ?? 'Untitled',
+                              cover: j['cover'] ?? 'assets/images/red_cover.png',
+                            ),
+                          ),
+                        );
+                      },
+                      child: _journalCard(
+                        title: j['title'] ?? 'Untitled',
+                        subtitle: "Wellness",
+                        colors: [
+                          const Color(0xFF1F3602),
+                          const Color(0xFFDADA5E),
+                          const Color(0xFF7AA00B),
+                          const Color(0xFF1D4F58),
+                          const Color(0xFF50BFC6),
+                        ],
+                      ),
+                    );
+                  }).toList(),
                 )
               ],
             ),
@@ -339,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _journalCard({required String title,required String subtitle,required List<Color> colors,}) {
     return Container(
-      height:100,
+      height:90,
       decoration: BoxDecoration(
         color: const Color.fromRGBO(20, 97, 112, 0.07),
         borderRadius: BorderRadius.circular(18),
